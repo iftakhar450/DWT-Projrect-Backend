@@ -21,18 +21,19 @@ export class AuthenticationController {
                     throw Error(err)
                 }
                 if (user) {
-                    bcrypt.compare(req.body.password, user.password.toString(), function (err: any, responce: any) {
-                        if (responce) {
-                            var token = jwt.sign({
-                                data: req.body.username
-                            }, config.auth.PRIVATE_KEY, { expiresIn: '1h' });
-                            // Send JWT
-                            res.statusMessage = 'Your have loggedIn succesfully'
-                            res.status(200).send({ username: user.username, name: user.name, token: token, mobile: user.mobile_no })
-                        } else {
-                            res.status(400).send('Invalid Password')
-                        }
-                    });
+                    // bcrypt.compare(req.body.password, user.password.toString(), function (err: any, responce: any) {
+                    // if (responce) {
+                    if (user.password.toString() == req.body.password) {
+                        var token = jwt.sign({
+                            data: req.body.username
+                        }, config.auth.PRIVATE_KEY, { expiresIn: '1h' });
+                        // Send JWT
+                        res.statusMessage = 'Your have loggedIn succesfully'
+                        res.status(200).send({ username: user.username, name: user.name, token: token, role:user.role })
+                    } else {
+                        res.status(400).send('Invalid Password')
+                    }
+                    // });
 
                 } else {
                     res.status(401).send('Unauthorized')

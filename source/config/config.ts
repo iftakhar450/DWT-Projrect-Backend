@@ -19,12 +19,12 @@ const DEFAULT_USER = {
     username: 'root',
     password: 'root',
     role: 'admin',
-    mobile_no: '091234325'
+    mobile_no: '091234325',
+    user_id:'root'
 
 }
 
 // Auth config
-
 const AUTH = {
     PRIVATE_KEY: "DWT_Backend_Project",
 }

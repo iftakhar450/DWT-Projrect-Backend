@@ -10,7 +10,7 @@ export class Ultility {
             next()
         } else {
             return res.status(406).json({
-                msg: 'User ID not given'
+                msg: 'ID not given'
             });
         }
     }

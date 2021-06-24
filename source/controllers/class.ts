@@ -1,29 +1,14 @@
 import * as mongoose from 'mongoose';
-import { UserSchema } from './../models/user'
+import { ClassSchema } from './../models/class'
 import { NextFunction, Request, Response } from 'express';
-import IUser from './../interfaces/user';
+import IClass from './../interfaces/class';
 
-const User = mongoose.model<IUser>('Users', UserSchema);
+const Class = mongoose.model<IClass>('Classes', ClassSchema);
 
-export class UserController {
-    // create user ID
-    public CreateUserID(req: Request, res: Response, next: NextFunction) {
-        let random = Math.random().toString(36).substring(7);
-        console.log("random", random);
-        if (req.body.role == 'student') {
-            random = 'std-' + random;
-        } else if (req.body.role == 'teacher') {
-            random = 'tec-' + random;
-        } else {
-            random = 'adm-' + random;
-        }
-        req.body['user_id'] = random;
-        next();
-    }
-
+export class ClassController {
     // create user
-    public addNewUser(req: Request, res: Response, next: NextFunction) {
-        const user = new User(req.body)
+    public addNewClass(req: Request, res: Response, next: NextFunction) {
+        const user = new Class(req.body)
         return user.save()
             .then((result: any) => {
                 return res.status(201).json({ user: result })
@@ -31,25 +16,23 @@ export class UserController {
             .catch((error: any) => {
                 console.log(error.code)
                 if (error.code == 11000) {
-                    return res.status(409).json({ msg: 'User already exsist with this Username' })
+                    return res.status(409).json({ msg: 'Class already exsist with this name' })
                 }
                 return res.status(409).json(error)
             })
     }
-
     //  get user list
-    public getUserList(req: Request, res: Response, next: NextFunction) {
+    public getClassList(req: Request, res: Response, next: NextFunction) {
         let criteria = {
             isDeleted: { $eq: 0 },
-            username: { $ne: 'root' }
         }
-        let fields = ['name', 'username', 'mobile_no', 'role','user_id']
-        User.find(criteria)
+        let fields = ['name']
+        Class.find(criteria)
             .select(fields)
             .exec()
             .then((result: any) => {
                 return res.status(200).json({
-                    users: result
+                    classes: result
                 })
             })
             .catch((error: any) => {
@@ -61,14 +44,14 @@ export class UserController {
     }
 
     // get user profile by id
-    public getUserProfile(req: Request, res: Response, next: NextFunction) {
+    public getClassProfile(req: Request, res: Response, next: NextFunction) {
         let criteria = {
             _id: req.params.id,
             isDeleted: { $eq: 0 },
 
         }
-        let fields = ['name', 'username', 'mobile_no', 'role']
-        User.findOne(criteria)
+        let fields = ['name']
+        Class.findOne(criteria)
             .select(fields)
             .exec()
             .then((result: any) => {
@@ -85,12 +68,12 @@ export class UserController {
     }
 
     // update user profile
-    public updateUserInfo(req: Request, res: Response, next: NextFunction) {
-        User.findOneAndUpdate({ _id: req.params.id }, req.body)
+    public updateClassInfo(req: Request, res: Response, next: NextFunction) {
+        Class.findOneAndUpdate({ _id: req.params.id }, req.body)
             .exec()
             .then((user: any) => {
                 return res.status(201).json({
-                    msg: 'User Updated Successfully'
+                    msg: 'Class Updated Successfully'
                 })
             })
             .catch((error: any) => {
@@ -102,12 +85,12 @@ export class UserController {
     }
 
     // delete user by id
-    public deleteUser(req: Request, res: Response, next: NextFunction) {
-        User.remove({ _id: req.params.id })
+    public deleteClass(req: Request, res: Response, next: NextFunction) {
+        Class.remove({ _id: req.params.id })
             .exec()
             .then((user: any) => {
                 return res.status(200).json({
-                    msg: 'User Deleted Successfully'
+                    msg: 'Class Deleted Successfully'
                 })
             })
             .catch((error: any) => {

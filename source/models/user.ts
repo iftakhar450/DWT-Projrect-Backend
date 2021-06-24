@@ -9,6 +9,11 @@ export const UserSchema = new Schema({
         unique: true,
         required: 'Username  required'
     },
+    user_id: {
+        type: String,
+        unique: true,
+        required: 'User id  required'
+    },
     password: String,
     mobile_no: String,
     role: String,
