@@ -2,6 +2,8 @@ import express from "express";
 import * as bodyParser from "body-parser";
 import { UserRoutes } from './routes/user';
 import { ClassRoutes } from './routes/class';
+import { SubjectRoutes } from './routes/subject';
+import { DashboardRoutes } from './routes/dashboard';
 import { AuthenticationRoutes } from './routes/authentication';
 import { connect } from './config/mongoDB'
 import cors from 'cors';
@@ -10,6 +12,8 @@ class App {
     public app: express.Application;
     public userRoutes: UserRoutes = new UserRoutes();
     public classRoutes: ClassRoutes = new ClassRoutes();
+    public subjectRoutes: SubjectRoutes = new SubjectRoutes();
+    public dashboardRoutes: DashboardRoutes = new DashboardRoutes();
     public authRoutes: AuthenticationRoutes = new AuthenticationRoutes();
 
     public allowedOrigins: cors.CorsOptions = {
@@ -33,6 +37,9 @@ class App {
         this.userRoutes.routes(this.app);
         this.authRoutes.routes(this.app);
         this.classRoutes.routes(this.app);
+        this.classRoutes.routes(this.app);
+        this.subjectRoutes.routes(this.app);
+        this.dashboardRoutes.routes(this.app);
     }
 
     private config(): void {

@@ -43,7 +43,7 @@ export class UserController {
             isDeleted: { $eq: 0 },
             username: { $ne: 'root' }
         }
-        let fields = ['name', 'username', 'mobile_no', 'role','user_id']
+        let fields = ['name', 'username', 'mobile_no', 'role', 'user_id']
         User.find(criteria)
             .select(fields)
             .exec()
@@ -116,5 +116,34 @@ export class UserController {
                     error
                 });
             })
+    }
+
+    // filter user as teacher or students
+    public filterUser(req: Request, res: Response, next: NextFunction) {
+        if (req.params.role) {
+            let criteria = {
+                isDeleted: { $eq: 0 },
+                role: { $eq: req.params.role }
+            }
+            let fields = ['name', 'username', 'mobile_no', 'role', 'user_id']
+            User.find(criteria)
+                .select(fields)
+                .exec()
+                .then((result: any) => {
+                    return res.status(200).json({
+                        users: result
+                    })
+                })
+                .catch((error: any) => {
+                    return res.status(500).json({
+                        msg: error.message,
+                        error
+                    });
+                })
+        } else {
+            return res.status(400).json({ msg: 'Filter string not found' })
+        }
+
+
     }
 }

@@ -14,14 +14,18 @@ export class UserRoutes {
         // Users
         app.route('/user')
             .get(this.userController.getUserList)
-            .post(this.userController.CreateUserID,this.userController.addNewUser);
+            .post(this.userController.CreateUserID, this.userController.addNewUser);
 
         // User detail
         app.route('/user/:id')
             // get specific user
             .get(this.allUtilities.checkUserId, this.userController.getUserProfile)
-            .put(this.allUtilities.checkUserId,this.userController.updateUserInfo)
-            .delete(this.allUtilities.checkUserId,this.userController.deleteUser)
+            .put(this.allUtilities.checkUserId, this.userController.updateUserInfo)
+            .delete(this.allUtilities.checkUserId, this.userController.deleteUser);
+            
+        // user filter as teachers or students 
+        app.route('/user/filter/:role')
+            .get(this.userController.filterUser)
     }
 }
 
