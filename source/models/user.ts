@@ -17,6 +17,11 @@ export const UserSchema = new Schema({
     password: String,
     mobile_no: String,
     role: String,
+    // id student
+    class: {
+        type: Schema.Types.ObjectId,
+        ref: "Classes"
+    },
     isDeleted: {
         type: Number,
         default: 0

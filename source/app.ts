@@ -3,6 +3,7 @@ import * as bodyParser from "body-parser";
 import { UserRoutes } from './routes/user';
 import { ClassRoutes } from './routes/class';
 import { SubjectRoutes } from './routes/subject';
+import { TestRoutes } from './routes/Test';
 import { DashboardRoutes } from './routes/dashboard';
 import { AuthenticationRoutes } from './routes/authentication';
 import { connect } from './config/mongoDB'
@@ -13,6 +14,7 @@ class App {
     public userRoutes: UserRoutes = new UserRoutes();
     public classRoutes: ClassRoutes = new ClassRoutes();
     public subjectRoutes: SubjectRoutes = new SubjectRoutes();
+    public testRoutes: TestRoutes = new TestRoutes();
     public dashboardRoutes: DashboardRoutes = new DashboardRoutes();
     public authRoutes: AuthenticationRoutes = new AuthenticationRoutes();
 
@@ -39,6 +41,7 @@ class App {
         this.classRoutes.routes(this.app);
         this.classRoutes.routes(this.app);
         this.subjectRoutes.routes(this.app);
+        this.testRoutes.routes(this.app);
         this.dashboardRoutes.routes(this.app);
     }
 

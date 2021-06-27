@@ -10,7 +10,6 @@ export class DashboardRoutes {
     public allUtilities: Ultility = new Ultility()
 
     public routes(app: any): void {
-        // console.log(app)
         // Users
         app.route('/dashboard/admin')
             .get(this.dashboardController.countStudent, this.dashboardController.countSubjects,

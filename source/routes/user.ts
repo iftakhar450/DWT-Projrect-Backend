@@ -10,7 +10,6 @@ export class UserRoutes {
     public allUtilities: Ultility = new Ultility()
 
     public routes(app: any): void {
-        // console.log(app)
         // Users
         app.route('/user')
             .get(this.userController.getUserList)

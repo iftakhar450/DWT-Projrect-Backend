@@ -8,14 +8,12 @@ const Subject = mongoose.model<ISubject>('Subjects', SubjectSchema);
 export class SubjectController {
     // create subject
     public addNewSubject(req: Request, res: Response, next: NextFunction) {
-        console.log(req.body)
         const subject = new Subject(req.body)
         return subject.save()
             .then((result: any) => {
                 return res.status(201).json({ subject: result })
             })
             .catch((error: any) => {
-                console.log(error)
                 if (error.code == 11000) {
                     return res.status(409).json({ msg: 'Subject already exsist with this name' })
                 }
@@ -31,7 +29,7 @@ export class SubjectController {
         Subject.find(criteria)
             .select(fields)
             .populate('class', '_id name')
-            .populate('teacher','_id name')
+            .populate('teacher', '_id name')
             .exec()
             .then((result: any) => {
                 return res.status(200).json({
@@ -98,6 +96,30 @@ export class SubjectController {
             })
             .catch((error: any) => {
                 return res.status(412).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
+    // filter subject for teacher 
+    public getTeacherSubjects(req: Request, res: Response, next: NextFunction) {
+        let criteria = {
+            isDeleted: { $eq: 0 },
+            teacher: { $eq: req.params.id },
+        }
+        let fields = ['title', 's_id']
+        Subject.find(criteria)
+            .select(fields)
+            .populate({ path: 'class', select: { 'updatedAt': 0, 'createdAt': 0, 'isDeleted': 0 } })
+            .exec()
+            .then((result: any) => {
+                return res.status(200).json({
+                    subjects: result
+                })
+            })
+            .catch((error: any) => {
+                return res.status(500).json({
                     msg: error.message,
                     error
                 });

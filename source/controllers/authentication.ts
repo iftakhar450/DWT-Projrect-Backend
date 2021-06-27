@@ -29,7 +29,7 @@ export class AuthenticationController {
                         }, config.auth.PRIVATE_KEY, { expiresIn: '1h' });
                         // Send JWT
                         res.statusMessage = 'Your have loggedIn succesfully'
-                        res.status(200).send({ username: user.username, name: user.name, token: token, role:user.role })
+                        res.status(200).send({ _id: user._id, username: user.username, name: user.name, token: token, role: user.role })
                     } else {
                         res.status(400).send('Invalid Password')
                     }

@@ -10,7 +10,6 @@ export class SubjectRoutes {
     public allUtilities: Ultility = new Ultility()
 
     public routes(app: any): void {
-        // console.log(app)
         // Subjects
         app.route('/subject')
             .get(this.subjectController.getSubjectList)
@@ -20,8 +19,11 @@ export class SubjectRoutes {
         app.route('/subject/:id')
             // get specific subject
             .get(this.allUtilities.checkUserId, this.subjectController.getSubjectProfile)
-            .put(this.allUtilities.checkUserId,this.subjectController.updateSubjectInfo)
-            .delete(this.allUtilities.checkUserId,this.subjectController.deleteSubject)
+            .put(this.allUtilities.checkUserId, this.subjectController.updateSubjectInfo)
+            .delete(this.allUtilities.checkUserId, this.subjectController.deleteSubject);
+        app.route('/subject/teacher/:id')
+            .get(this.allUtilities.checkUserId, this.subjectController.getTeacherSubjects)
+       
     }
 }
 

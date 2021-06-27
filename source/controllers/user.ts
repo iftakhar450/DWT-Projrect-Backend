@@ -9,7 +9,6 @@ export class UserController {
     // create user ID
     public CreateUserID(req: Request, res: Response, next: NextFunction) {
         let random = Math.random().toString(36).substring(7);
-        console.log("random", random);
         if (req.body.role == 'student') {
             random = 'std-' + random;
         } else if (req.body.role == 'teacher') {

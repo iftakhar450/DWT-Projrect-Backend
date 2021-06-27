@@ -9,17 +9,16 @@ export class ClassRoutes {
     public classController: ClassController = new ClassController();
     public allUtilities: Ultility = new Ultility()
     public routes(app: any): void {
-        // console.log(app)
         // Classes
         app.route('/class')
             .get(this.classController.getClassList)
-            .post(this.classController.addNewClass);
+            .post(this.classController.addNewClass, this.classController.assignClassToUser);
 
         // Class detail
         app.route('/class/:id')
             // get specific user
             .get(this.allUtilities.checkUserId, this.classController.getClassProfile)
-            .put(this.allUtilities.checkUserId,this.classController.updateClassInfo)
+            .put(this.allUtilities.checkUserId,this.classController.updateClassInfo, this.classController.assignClassToUser)
             .delete(this.allUtilities.checkUserId,this.classController.deleteClass)
     }
 }

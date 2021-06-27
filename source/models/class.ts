@@ -8,10 +8,10 @@ export const ClassSchema = new Schema({
         unique: true,
         required: 'Name  required'
     },
-    // class_id: {
-    //     type: String,
-    //     unique: true,
-    // },
+    students: [{
+        type: Schema.Types.ObjectId,
+        ref: "Users"
+    }],
     isDeleted: {
         type: Number,
         default: 0

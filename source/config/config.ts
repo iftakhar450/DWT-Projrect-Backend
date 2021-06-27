@@ -20,7 +20,8 @@ const DEFAULT_USER = {
     password: 'root',
     role: 'admin',
     mobile_no: '091234325',
-    user_id:'root'
+    user_id:'root',
+    name:'root'
 
 }
 
