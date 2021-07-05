@@ -66,9 +66,10 @@ export class UserController {
             isDeleted: { $eq: 0 },
 
         }
-        let fields = ['name', 'username', 'mobile_no', 'role']
+        let fields = ['name', 'username', 'mobile_no', 'role', 'password', 'class']
         User.findOne(criteria)
             .select(fields)
+            .populate({ path: 'class', select: { name: 1 } })
             .exec()
             .then((result: any) => {
                 return res.status(200).json({
@@ -145,4 +146,63 @@ export class UserController {
 
 
     }
+
+
+    public getUserInfo(req: Request, res: Response, next: NextFunction) {
+        let criteria = {
+            _id: req.params.id,
+            // isDeleted: { $eq: 0 },
+        }
+        let fields = ['name', 'username', 'mobile_no', 'role', 'password', 'class']
+        User.findOne(criteria)
+            .select(fields)
+            .populate({ path: 'class', select: { name: 1 } })
+            .exec()
+            .then((result: any) => {
+                // return res.status(200).json({
+                //     user: result
+                // })
+                req.body['user'] = result;
+                next();
+            })
+            .catch((error: any) => {
+                return res.status(412).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
+
+
+    public filterStudentByClass(req: Request, res: Response, next: NextFunction) {
+
+        if (req.params.class_id) {
+            let criteria = {
+                isDeleted: { $eq: 0 },
+                class: { $eq: req.params.class_id }
+            }
+            let fields = ['name', '_id']
+            User.find(criteria)
+                .select(fields)
+                .exec()
+                .then((result: any) => {
+                    req.body['students'] = result;
+                    next();
+                    // return res.status(200).json({
+                    //     students: result
+                    // })
+                })
+                .catch((error: any) => {
+                    return res.status(500).json({
+                        msg: error.message,
+                        error
+                    });
+                })
+        } else {
+            return res.status(400).json({ msg: 'Filter string not found' })
+        }
+
+    }
+
 }

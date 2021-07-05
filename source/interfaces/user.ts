@@ -6,6 +6,7 @@ export default interface IUser extends Document {
     username: String,
     password: String,
     mobile_no: String,
-    role: String
+    role: String,
+    class:String
 
 }

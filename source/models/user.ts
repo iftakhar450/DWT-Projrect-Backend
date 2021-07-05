@@ -20,7 +20,8 @@ export const UserSchema = new Schema({
     // id student
     class: {
         type: Schema.Types.ObjectId,
-        ref: "Classes"
+        ref: "Classes",
+        default: null
     },
     isDeleted: {
         type: Number,

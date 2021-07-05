@@ -28,8 +28,9 @@ export class AuthenticationController {
                             data: req.body.username
                         }, config.auth.PRIVATE_KEY, { expiresIn: '1h' });
                         // Send JWT
+                        // console.log(user)
                         res.statusMessage = 'Your have loggedIn succesfully'
-                        res.status(200).send({ _id: user._id, username: user.username, name: user.name, token: token, role: user.role })
+                        res.status(200).send({ _id: user._id, username: user.username, name: user.name, token: token, role: user.role, class_is: user.class })
                     } else {
                         res.status(400).send('Invalid Password')
                     }

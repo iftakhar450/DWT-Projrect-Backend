@@ -13,6 +13,10 @@ export const SubjectSchema = new Schema({
         unique: true,
         required: 'Subject Id required'
     },
+    is_archive: {
+        type: String,
+        default: 'n'
+    },
     class: {
         required: 'Class Id required',
         type: Schema.Types.ObjectId,

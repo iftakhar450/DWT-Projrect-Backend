@@ -3,9 +3,10 @@ import * as bodyParser from "body-parser";
 import { UserRoutes } from './routes/user';
 import { ClassRoutes } from './routes/class';
 import { SubjectRoutes } from './routes/subject';
-import { TestRoutes } from './routes/Test';
+import { TestRoutes } from './routes/test';
 import { DashboardRoutes } from './routes/dashboard';
 import { AuthenticationRoutes } from './routes/authentication';
+import { ChatRoutes } from './routes/chat';
 import { connect } from './config/mongoDB'
 import cors from 'cors';
 
@@ -17,6 +18,7 @@ class App {
     public testRoutes: TestRoutes = new TestRoutes();
     public dashboardRoutes: DashboardRoutes = new DashboardRoutes();
     public authRoutes: AuthenticationRoutes = new AuthenticationRoutes();
+    public chatRoutes: ChatRoutes = new ChatRoutes();
 
     public allowedOrigins: cors.CorsOptions = {
         allowedHeaders: [
@@ -43,6 +45,7 @@ class App {
         this.subjectRoutes.routes(this.app);
         this.testRoutes.routes(this.app);
         this.dashboardRoutes.routes(this.app);
+        this.chatRoutes.routes(this.app);
     }
 
     private config(): void {

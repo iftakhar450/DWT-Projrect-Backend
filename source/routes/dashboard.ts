@@ -14,6 +14,7 @@ export class DashboardRoutes {
         app.route('/dashboard/admin')
             .get(this.dashboardController.countStudent, this.dashboardController.countSubjects,
                 this.dashboardController.countClasses, this.dashboardController.countTeachers)
+
     }
 }
 

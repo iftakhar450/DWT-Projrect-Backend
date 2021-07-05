@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 export const TestSchema = new Schema({
     name: {
         type: String,
-        unique: true,
+        // unique: true,
         required: 'Subject name required'
     },
     date: {

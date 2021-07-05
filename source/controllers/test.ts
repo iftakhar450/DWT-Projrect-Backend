@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
-import { TestSchema } from './../models/Test';
+import { TestSchema } from './../models/test';
 import { NextFunction, Request, Response } from 'express';
-import  ITest  from './../interfaces/Test'
+import ITest from './../interfaces/test'
 
 const Test = mongoose.model<ITest>('Tests', TestSchema);
 
@@ -11,7 +11,9 @@ export class TestController {
         const test = new Test(req.body)
         return test.save()
             .then((result: any) => {
-                return res.status(201).json({ test: result })
+                req.body['newTestId'] = result._id;
+                next();
+                // return res.status(201).json({ test: result })
             })
             .catch((error: any) => {
                 console.log(error)
@@ -88,7 +90,7 @@ export class TestController {
 
     // delete Test by id
     public deleteTest(req: Request, res: Response, next: NextFunction) {
-        Test.remove({ _id: req.params.id })
+        Test.deleteOne({ _id: req.params.id })
             .exec()
             .then((test: any) => {
                 return res.status(200).json({
@@ -103,5 +105,82 @@ export class TestController {
             })
     }
 
+
+    // getTestForTeacher 
+    public getTestForTeacher(req: Request, res: Response, next: NextFunction) {
+        let criteria = {
+            teacher: req.params.id,
+            isDeleted: { $eq: 0 },
+
+        }
+        let fields = ['name', 'date', 'status']
+        Test.find(criteria)
+            .select(fields)
+            .populate({ path: 'subject', select: { 'updatedAt': 0, 'createdAt': 0, 'isDeleted': 0 } })
+            .exec()
+            .then((result: any) => {
+                return res.status(200).json({
+                    tests: result
+                })
+            })
+            .catch((error: any) => {
+                return res.status(412).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
+    public findTest(req: Request, res: Response, next: NextFunction) {
+        console.log()
+        let criteria = {
+            _id: req.params.id,
+            isDeleted: { $eq: 0 },
+
+        }
+        let fields = ['name', 'date', 'status']
+        Test.findById(criteria)
+            .select(fields)
+            .populate({
+                path: 'subject', select: { 'updatedAt': 0, 'createdAt': 0, 'isDeleted': 0 },
+            })
+            .exec()
+            .then((result: any) => {
+                req.body['test'] = result;
+                next();
+            })
+            .catch((error: any) => {
+                return res.status(412).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
+    public getTestListForStudents(req: Request, res: Response, next: NextFunction) {
+        // console.log(req.body)
+        let criteria = {
+            isDeleted: { $eq: 0 },
+            subject: { $in: req.body.subject_ids }
+
+        }
+        let fields = ['title', 's_id']
+        Test.find(criteria)
+            .select(fields)
+            .populate('class', '_id name')
+            .populate('teacher', '_id name')
+            .exec()
+            .then((result: any) => {
+                return res.status(200).json({
+                    Tests: result
+                })
+            })
+            .catch((error: any) => {
+                return res.status(500).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
 
 }

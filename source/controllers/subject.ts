@@ -25,7 +25,7 @@ export class SubjectController {
         let criteria = {
             isDeleted: { $eq: 0 },
         }
-        let fields = ['title', 's_id']
+        let fields = ['title', 's_id', 'is_archive']
         Subject.find(criteria)
             .select(fields)
             .populate('class', '_id name')
@@ -120,6 +120,77 @@ export class SubjectController {
             })
             .catch((error: any) => {
                 return res.status(500).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
+
+    // archive this subject
+    public archiveSubject(req: Request, res: Response, next: NextFunction) {
+
+        // console.log(req.body);
+        Subject.findOneAndUpdate({ _id: req.params.id }, { $set: { is_archive: req.body.isArchive } })
+            .exec()
+            .then((subject: any) => {
+                return res.status(201).json({
+                    msg: 'Subject Archived Successfully'
+                })
+            })
+            .catch((error: any) => {
+                return res.status(412).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
+    // getSubjectForClass
+    public getSubjectForClass(req: Request, res: Response, next: NextFunction) {
+        let criteria = {
+            isDeleted: { $eq: 0 },
+            class: { $eq: req.params.id },
+        }
+        let fields = ['title', 's_id']
+        Subject.find(criteria)
+            .select(fields)
+            .populate({ path: 'teacher', select: { '_id': 1, 'name': 1 } })
+            .exec()
+            .then((result: any) => {
+                return res.status(200).json({
+                    subjects: result
+                })
+            })
+            .catch((error: any) => {
+                return res.status(500).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
+
+
+    public filterTeacherBySubject(req: Request, res: Response, next: NextFunction) {
+        let criteria = {
+            class: req.params.class_id,
+            isDeleted: { $eq: 0 },
+
+        }
+        let fields = ['name']
+        Subject.find(criteria)
+            .select(fields)
+            .populate({ path: 'teacher', select: { _id: 1, name: 1 } })
+            .exec()
+            .then((result: any) => {
+                return res.status(200).json({
+                    subject: result,
+                    students: req.body.students
+                })
+            })
+            .catch((error: any) => {
+                return res.status(412).json({
                     msg: error.message,
                     error
                 });
