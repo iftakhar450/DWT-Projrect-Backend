@@ -2,7 +2,10 @@ import * as mongoose from 'mongoose';
 import { UserSchema } from './../models/user'
 import { NextFunction, Request, Response } from 'express';
 import IUser from './../interfaces/user';
+import { SubjectSchema } from '../models/subject';
+import ISubject from '../interfaces/subject';
 
+const Subject = mongoose.model<ISubject>('Subjects', SubjectSchema);
 const User = mongoose.model<IUser>('Users', UserSchema);
 
 export class UserController {
@@ -101,6 +104,38 @@ export class UserController {
             })
     }
 
+    // check if user is teacher check subjects 
+    public checkTeacherSubject(req: Request, res: Response, next: NextFunction) {
+        let criteria = {
+            _id: req.params.id,
+            isDeleted: { $eq: 0 },
+        }
+        User.findOne(criteria)
+            .exec()
+            .then((result: any) => {
+                if (result && result.role == 'teacher') {
+                    let criteria = {
+                        isDeleted: { $eq: 0 },
+                        is_archive: { $eq: 'n' },
+                        teacher: { $eq: req.params.id },
+                    }
+                    let fields = ['title', 's_id']
+                    Subject.find(criteria)
+                        .exec()
+                        .then((resu: any) => {
+                            if (resu.length == 0) {
+                                next();
+                            } else {
+                                res.status(202).json({ msg: 'Can not deleted teacher has subject', code:true })
+                            }
+                        })
+                } else {
+                    next();
+                }
+            })
+
+
+    }
     // delete user by id
     public deleteUser(req: Request, res: Response, next: NextFunction) {
         User.remove({ _id: req.params.id })

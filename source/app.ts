@@ -10,6 +10,7 @@ import { ChatRoutes } from './routes/chat';
 import { connect } from './config/mongoDB'
 import cors from 'cors';
 
+
 class App {
     public app: express.Application;
     public userRoutes: UserRoutes = new UserRoutes();
@@ -27,6 +28,7 @@ class App {
             'Content-Type',
             'Accept',
             'X-Access-Token',
+            'authorization'
         ],
         credentials: true,
         methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',

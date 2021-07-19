@@ -34,6 +34,7 @@ export class DashboardController {
     public countSubjects(req: Request, res: Response, next: NextFunction) {
         let criteria = {
             isDeleted: { $eq: 0 },
+            // is_archive: {$eq: 'n'}
         }
         Subject.find(criteria)
             .exec()

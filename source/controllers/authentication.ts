@@ -44,4 +44,16 @@ export class AuthenticationController {
 
     }
 
+    public authenticateToken(req: Request, res: Response, next: NextFunction) {
+        let token = req.headers['authorization'];
+        // console.log('------------')
+        // console.log(token);
+        if (token == null) return res.status(401).send('Authentication Token Required'); // if there isn't any token
+        jwt.verify(token,config.auth.PRIVATE_KEY, (err, user) => {
+            if (err) return res.status(403).send("Token Expired");
+            // req.user = user
+            next() // pass the execution off to whatever request the client intended
+        })
+    }
+
 }

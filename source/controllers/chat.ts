@@ -58,4 +58,29 @@ export class ChatController {
                 }
             })
     }
+
+    public newMessageCheck(req: Request, res: Response, next: NextFunction) {
+        // console.log(req.params.id)
+        Chat.findOne({ receiver: req.params.id, status: 'y' })
+            .populate({ path: 'sender', select: { name: 1 } })
+            .exec()
+            .then((result: any) => {
+                if (result) { 
+                    Chat.updateMany({ receiver: req.params.id, status: 'y' }, { $set: { status: 'n' } })
+                        .then((rus) => {
+                            return res.status(201).json({ msg: rus })
+                        })
+                        .catch((error) => {
+                            return res.status(409).json(error)
+                        })
+                }else {
+                    return res.status(201).json('ok')
+                }
+
+            })
+            .catch((error: any) => {
+                console.log(error)
+                return res.status(409).json(error)
+            })
+    }
 }

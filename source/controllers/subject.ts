@@ -2,8 +2,10 @@ import * as mongoose from 'mongoose';
 import { SubjectSchema } from './../models/subject'
 import { NextFunction, Request, Response } from 'express';
 import ISubject from './../interfaces/subject';
-
+import { TestSchema } from './../models/test';
+import ITest from './../interfaces/test'
 const Subject = mongoose.model<ISubject>('Subjects', SubjectSchema);
+const Test = mongoose.model<ITest>('Tests', TestSchema);
 
 export class SubjectController {
     // create subject
@@ -24,6 +26,7 @@ export class SubjectController {
     public getSubjectList(req: Request, res: Response, next: NextFunction) {
         let criteria = {
             isDeleted: { $eq: 0 },
+            // is_archive: { $eq: 'n' },
         }
         let fields = ['title', 's_id', 'is_archive']
         Subject.find(criteria)
@@ -85,6 +88,34 @@ export class SubjectController {
             })
     }
 
+    // check test for subject
+    public checkTestForSubject(req: Request, res: Response, next: NextFunction) {
+        let criteria = {
+            subject: req.params.id,
+            isDeleted: { $eq: 0 },
+
+        }
+        Test.find(criteria)
+            .exec()
+            .then((result: any) => {
+                console.log(result.length)
+                if (result.length > 0) {
+                    return res.status(201).json({
+                        msg: 'Can not remove because of dependent Test',
+                        code: true
+                    });
+                } else {
+                    next();
+                }
+            })
+            .catch((error: any) => {
+                return res.status(412).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
     // delete subject by id
     public deleteSubject(req: Request, res: Response, next: NextFunction) {
         Subject.remove({ _id: req.params.id })
@@ -106,6 +137,7 @@ export class SubjectController {
     public getTeacherSubjects(req: Request, res: Response, next: NextFunction) {
         let criteria = {
             isDeleted: { $eq: 0 },
+            is_archive: { $eq: 'n' },
             teacher: { $eq: req.params.id },
         }
         let fields = ['title', 's_id']
@@ -150,6 +182,7 @@ export class SubjectController {
     public getSubjectForClass(req: Request, res: Response, next: NextFunction) {
         let criteria = {
             isDeleted: { $eq: 0 },
+            is_archive: { $eq: 'n' },
             class: { $eq: req.params.id },
         }
         let fields = ['title', 's_id']
@@ -191,6 +224,34 @@ export class SubjectController {
             })
             .catch((error: any) => {
                 return res.status(412).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
+
+    public getClassIdFromTeacherSubject(req: Request, res: Response, next: NextFunction) {
+        let criteria = {
+            isDeleted: { $eq: 0 },
+            teacher: { $eq: req.params.id },
+            is_archive: { $eq: 'n' }
+
+        }
+        let fields = ['class']
+        Subject.find(criteria)
+            .select(fields)
+            .populate({
+                path: 'class', select: { _id: 1, name: 1 },
+                populate: { path: 'students', select: { _id: 1, name: 1 } }
+            })
+            .exec()
+            .then((result: any) => {
+                return res.status(200).json({
+                    subjects: result
+                })
+            })
+            .catch((error: any) => {
+                return res.status(500).json({
                     msg: error.message,
                     error
                 });

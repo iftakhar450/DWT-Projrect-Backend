@@ -15,6 +15,10 @@ export const ChatSchema = new Schema({
         type: String,
         required: 'message  required'
     },
+    status: {
+        type: String,
+        default:'y'
+    },
     isDeleted: {
         type: Number,
         default: 0

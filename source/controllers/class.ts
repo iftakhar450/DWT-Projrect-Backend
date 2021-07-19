@@ -4,6 +4,10 @@ import { NextFunction, Request, Response } from 'express';
 import IClass from './../interfaces/class';
 import IUser from './../interfaces/user';
 import { UserSchema } from '../models/user';
+import { SubjectSchema } from './../models/subject'
+import ISubject from './../interfaces/subject';
+
+const Subject = mongoose.model<ISubject>('Subjects', SubjectSchema);
 
 const User = mongoose.model<IUser>('Users', UserSchema);
 const Class = mongoose.model<IClass>('Classes', ClassSchema);
@@ -112,6 +116,35 @@ export class ClassController {
             })
     }
 
+    // Deassign student from class
+    public deAssignUserfromClass(req: Request, res: Response, next: NextFunction) {
+        User.updateMany({ class: req.params.id }, { $unset: { class: 1 } })
+            .exec()
+            .then((result: any) => {
+                // return res.status(201).json({ class: result })
+                console.log(result);
+                next();
+            })
+            .catch((error) => {
+                console.log(error)
+                return res.status(409).json(error)
+            })
+    }
+
+    // makeSubjectArchiveOfDeleteClass
+    public makeSubjectArchiveOfDeleteClass(req: Request, res: Response, next: NextFunction) {
+        Subject.updateMany({ class: req.params.id }, { $set: { is_archive: 'y' } })
+            .exec()
+            .then((subject: any) => {
+              next();
+            })
+            .catch((error: any) => {
+                return res.status(412).json({
+                    msg: error.message,
+                    error
+                });
+            })
+    }
     // delete user by id
     public deleteClass(req: Request, res: Response, next: NextFunction) {
         Class.remove({ _id: req.params.id })
@@ -128,5 +161,7 @@ export class ClassController {
                 });
             })
     }
+
+
 
 }
